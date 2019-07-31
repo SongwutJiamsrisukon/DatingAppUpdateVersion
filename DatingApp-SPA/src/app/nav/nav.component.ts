@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../_services/auth.service';
+import { tokenKey } from '@angular/core/src/view';
 
 @Component({
   selector: 'app-nav',
@@ -15,13 +16,19 @@ export class NavComponent implements OnInit {
   ngOnInit() {
   }
 
+  loggedIn() {
+    const token = localStorage.getItem('token');
+    // !! is had return true else return false
+    return !!token;
+  }
+
   login(){
     /**use subscribe to get return value observable from authServince.login() */
     this.authServince.login(this.model).subscribe(
       next => {
         console.log('Logged in successfully');
       }, error => {
-        console.log('Failed to login');
+        console.log(error);
       }
     );
   }
