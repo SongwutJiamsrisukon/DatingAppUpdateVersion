@@ -18,8 +18,13 @@ export class NavComponent implements OnInit {
 
   loggedIn() {
     const token = localStorage.getItem('token');
-    // !! is had return true else return false
+    // !! is there something in token return true else return false
     return !!token;
+  }
+
+  logout(){
+    localStorage.removeItem('token');
+    console.log('logged out');
   }
 
   login(){
