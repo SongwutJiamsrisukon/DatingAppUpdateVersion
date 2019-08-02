@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../_services/auth.service';
 import { tokenKey } from '@angular/core/src/view';
 import { AlertifyService } from '../_services/alertify.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-nav',
@@ -12,7 +13,7 @@ export class NavComponent implements OnInit {
 
  model: any = {};
 
-  constructor(public authService: AuthService, private alertify: AlertifyService) { }
+  constructor(public authService: AuthService, private alertify: AlertifyService, private router: Router) { }
 
   ngOnInit() {
   }
@@ -24,6 +25,7 @@ export class NavComponent implements OnInit {
   logout() {
     this.authService.logout();
     this.alertify.message('logged out');
+    this.router.navigate(['home']);
   }
 
   login() {
@@ -33,8 +35,9 @@ export class NavComponent implements OnInit {
         this.alertify.success('Logged in successfully');
       }, error => {
         this.alertify.error(error);
+      }, () => { // after complete do rounting, you can use inside next but this is learning coures we must to test much as possible
+        this.router.navigate(['/members']);
       }
     );
   }
-
 }
