@@ -11,5 +11,6 @@ namespace DatingApp.API.Data
          Task<bool> SaveAll();// when return false is mean no changing to save or error
          Task<IEnumerable<User>> GetUsers();
          Task<User> GetUser(int id);
+         Task<Photo> GetPhoto(int id);
     }
 }
