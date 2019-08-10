@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from './_services/auth.service';
 import {JwtHelperService} from '@auth0/angular-jwt';
+import { LocalUserData } from './_models/localUserData';
 
 @Component({
   selector: 'app-root',
@@ -14,11 +15,14 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     const token = localStorage.getItem('token');
-    if (!this.jwtHelper.isTokenExpired(token)) {
-      this.authService.decodeToken = this.jwtHelper.decodeToken(token);
-    } else {
-      this.authService.logout(); // remove Token
-    } // logout
+    const localUserData: LocalUserData = JSON.parse(localStorage.getItem('localUserData'));
+    // token is expired or localUserData == null
+    if (this.jwtHelper.isTokenExpired(token) || !localUserData) {
+      this.authService.logout();
+    }
+    this.authService.decodeToken = this.jwtHelper.decodeToken(token);
+    this.authService.localUserData = localUserData;
+    this.authService.changeMemberPhoto(localUserData.photoUrl);
 
   }
 

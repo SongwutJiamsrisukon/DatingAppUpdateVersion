@@ -52,6 +52,7 @@ namespace DatingApp.API.Controllers
 
         // ยิง api 1 ครั้ง upload 1รูป
         [HttpPost]
+        //Route("api/users/{userId}/photos")
         public async Task<IActionResult> AddPhotoForUser(int userId, [FromForm]PhotoForCreationDto photoForCreationDto){
 
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
@@ -89,6 +90,67 @@ namespace DatingApp.API.Controllers
                 return CreatedAtRoute("GetPhoto", new { id = photo.Id}, photoToReturn); // you will see the result when test with angular
             }
             return BadRequest("Could not add the photo");
+        }
+
+        [HttpPost("{id}/setMain")]
+        //Route("api/users/{userId}/photos")
+        public async Task<IActionResult> SetMainPhoto(int userId, int id) {
+
+        //handle error section
+            if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+                return Unauthorized();
+            var user = await _repo.GetUser(userId);
+
+            //check this user had photo with id
+            if(!user.Photos.Any(p => p.Id == id))
+                return Unauthorized(); // status code 401
+            var photoFromRepo = await _repo.GetPhoto(id);
+
+            if(photoFromRepo.IsMain == true)
+                return BadRequest("This is already main photo");
+        //end handle error section
+
+            photoFromRepo.IsMain = true;
+            var currentMainPhoto = await _repo.GetMainPhotoForUser(userId);
+            currentMainPhoto.IsMain = false;
+
+            if(await _repo.SaveAll()){
+                return NoContent();
+            }
+            return BadRequest("Could not set photo to main"); // status code 400
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeletePhoto(int userId, int id){
+        //handle error section
+            if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+                return Unauthorized();
+            var user = await _repo.GetUser(userId);
+
+            //check this user had photo with id
+            if(!user.Photos.Any(p => p.Id == id))
+                return Unauthorized(); // status code 401
+            var photoFromRepo = await _repo.GetPhoto(id);
+
+            if(photoFromRepo.IsMain == true)
+                return BadRequest("You cannot delete your main photo");
+        //end handle error section
+
+            if (photoFromRepo.PublicId != null) // Seed Data(Generate random pic) has not publicID, so don't use cloudinary
+            {
+                var deletionParams = new DeletionParams(photoFromRepo.PublicId);
+                var result = _cloudinary.Destroy(deletionParams); // return ok if success check on document
+                if (result.Result == "ok") {
+                    _repo.Delete(photoFromRepo);
+                }
+            } else { // delete seed data
+                _repo.Delete(photoFromRepo);
+            }
+
+            if (await _repo.SaveAll()){
+                return Ok();
+            }
+            return BadRequest("Failed to delete the photo");
         }
     }
 }

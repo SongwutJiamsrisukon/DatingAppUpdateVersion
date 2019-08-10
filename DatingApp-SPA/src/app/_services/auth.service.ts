@@ -1,9 +1,12 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+
 import {map} from 'rxjs/operators';
 
 import {JwtHelperService} from '@auth0/angular-jwt';
 import { environment } from 'src/environments/environment';
+import { LocalUserData } from '../_models/localUserData';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -11,11 +14,18 @@ import { environment } from 'src/environments/environment';
 export class AuthService {
 
   baseUrl = environment.apiUrl + 'auth/';
-
   jwtHelper = new JwtHelperService();
   decodeToken: any;
+  localUserData: LocalUserData;
+  photoUrl = new BehaviorSubject<string>('../../assets/user.png');
+  currentPhotoUrl = this.photoUrl.asObservable(); // currentPhotoUrl use as observable, so we can subscribe this
 
   constructor(private http: HttpClient) { }
+
+  // when user login call this
+  changeMemberPhoto(photoUrl: string) {
+    this.photoUrl.next(photoUrl); // next is use to update this.photoUrl.asObservable()
+  }
 
   loggedIn() {
     const token = localStorage.getItem('token');
@@ -24,6 +34,9 @@ export class AuthService {
 
   logout() {
     localStorage.removeItem('token');
+    this.decodeToken = null;
+    localStorage.removeItem('localUserData');
+    this.localUserData = null;
   }
 
   /** model is UserForLoginDto */
@@ -34,8 +47,10 @@ export class AuthService {
         const responseObject = response;
         if (responseObject) {
           localStorage.setItem('token', responseObject.token);
+          localStorage.setItem('localUserData', JSON.stringify(responseObject.localUserData)); // convert object to string
           this.decodeToken = this.jwtHelper.decodeToken(responseObject.token);
-          console.log(this.decodeToken);
+          this.localUserData = responseObject.localUserData;
+          this.changeMemberPhoto(this.localUserData.photoUrl);
         }
       })
     );
