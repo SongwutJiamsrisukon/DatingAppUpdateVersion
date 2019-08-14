@@ -33,7 +33,7 @@ namespace DatingApp.API.Controllers
             return Ok(usersToReturn);
         }
 
-        [HttpGet("{id}")] //use action when hit url with httpGet localhost:5000/api/users/{id}
+        [HttpGet("{id}", Name = "GetUser")] //use action when hit url with httpGet localhost:5000/api/users/{id}
         public async Task<ActionResult> GetUser(int id)
         {
             var user = await _repo.GetUser(id);

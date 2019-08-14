@@ -7,6 +7,7 @@ import {JwtHelperService} from '@auth0/angular-jwt';
 import { environment } from 'src/environments/environment';
 import { LocalUserData } from '../_models/localUserData';
 import { BehaviorSubject } from 'rxjs';
+import { User } from '../_models/user';
 
 @Injectable({
   providedIn: 'root'
@@ -56,9 +57,14 @@ export class AuthService {
     );
   }
 
-  /** model is UserForRegisterDto */
+  register(user: User) {
+    return this.http.post(this.baseUrl + 'register', user);
+  }
+  /*
   register(model: any) {
     return this.http.post(this.baseUrl + 'register', model);
   }
+  */
+
 
 }
