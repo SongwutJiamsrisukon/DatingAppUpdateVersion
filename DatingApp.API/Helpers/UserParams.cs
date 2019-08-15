@@ -3,13 +3,13 @@ namespace DatingApp.API.Helpers
     public class UserParams
     {   
         //prevent user change number to get listof user to 10m
-        private const int MaxPageSize = 20; 
+        private const int MaxItemsPerPage = 20; 
         public int PageNumber { get; set; } = 1; // default value
-        private int pageSize = 10;
-        public int PageSize
+        private int itemsPerPage = 10;
+        public int ItemsPerPage
         {
-            get { return pageSize; }
-            set { pageSize = (value > MaxPageSize) ? MaxPageSize : value; }
+            get { return itemsPerPage; }
+            set { itemsPerPage = (value > MaxItemsPerPage) ? MaxItemsPerPage : value; }
         }
 
         //if client don't specify PageNumber, PageNumber default value = 1
