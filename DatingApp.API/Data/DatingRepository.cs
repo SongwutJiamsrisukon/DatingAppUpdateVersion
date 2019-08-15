@@ -44,7 +44,7 @@ namespace DatingApp.API.Data
         {
             var users = _context.Users.Include(u => u.Photos);
 
-            return await PagedList<User>.CreateAsync(users, userParams.PageNumber, userParams.ItemsPerPage);
+            return await PagedList<User>.CreateAsync(users, userParams.PageNumber, userParams.PageSize);
         }
 
         /*

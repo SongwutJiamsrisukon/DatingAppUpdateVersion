@@ -27,7 +27,7 @@ namespace DatingApp.API.Controllers
         }
 
         [HttpGet] //use action when hit url with httpGet localhost:5000/api/users
-        public async Task<IActionResult> GetUsers([FromQuery]UserParams userParams) // use default when no adding query string(like?&=) on url
+        public async Task<IActionResult> GetUsers([FromQuery]UserParams userParams) // [FromQuery] use to know params(?pageNumber=2&pageSize=8) on url, if no params it use default
         {
             var pagedListUsers = await _repo.GetUsers(userParams);
 

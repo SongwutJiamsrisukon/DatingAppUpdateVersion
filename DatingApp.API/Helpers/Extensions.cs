@@ -22,13 +22,15 @@ namespace DatingApp.API.Helpers
             response.Headers.Add("Access-Control-Allow-Origin","*");
         }
 
-        // send back to client
+        // send back to client(Angular)
         public static void AddPagination(this HttpResponse response, int currentPage, int itemsPerPage, int totalItems, int totalPages){
+            response.Headers.Add("Access-Control-Expose-Headers","Pagination");
+
             var paginationHeader = new PaginationHeader(currentPage, itemsPerPage, totalItems, totalPages);
             var camelCaseFormatter = new JsonSerializerSettings();
             camelCaseFormatter.ContractResolver = new CamelCasePropertyNamesContractResolver();
-            response.Headers.Add("Pagination", JsonConvert.SerializeObject(paginationHeader, camelCaseFormatter)); //convert object to JSON string(use overload2 to set camelcase on second params)
-            response.Headers.Add("Access-Control-Expose-Headers","Pagination");
+            //convert object to JSON string(use overload2 to set camelcase on second params)
+            response.Headers.Add("Pagination", JsonConvert.SerializeObject(paginationHeader, camelCaseFormatter));
         }
 
         public static int CalculateAge(this DateTime theDateTime){
