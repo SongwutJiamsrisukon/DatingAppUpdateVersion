@@ -27,11 +27,14 @@ namespace DatingApp.API.Controllers
         }
 
         [HttpGet] //use action when hit url with httpGet localhost:5000/api/users
-        public async Task<IActionResult> GetUsers()
+        public async Task<IActionResult> GetUsers([FromQuery]UserParams userParams) // use default when no adding query string(like?&=) on url
         {
-            var users = await _repo.GetUsers();
+            var pagedListUsers = await _repo.GetUsers(userParams);
 
-            var usersToReturn = _mapper.Map<IEnumerable<UserForListDto>>(users);
+            var usersToReturn = _mapper.Map<IEnumerable<UserForListDto>>(pagedListUsers);
+
+            Response.AddPagination(pagedListUsers.CurrentPage, pagedListUsers.PageSize, pagedListUsers.TotalCount, pagedListUsers.TotalPages); //set pagination information from header
+            
             return Ok(usersToReturn);
         }
 
