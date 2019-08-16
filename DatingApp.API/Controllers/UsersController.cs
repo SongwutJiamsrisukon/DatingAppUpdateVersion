@@ -29,6 +29,13 @@ namespace DatingApp.API.Controllers
         [HttpGet] //use action when hit url with httpGet localhost:5000/api/users
         public async Task<IActionResult> GetUsers([FromQuery]UserParams userParams) // [FromQuery] use to know params(?pageNumber=2&pageSize=8) on url, if no params it use default
         {
+            var currentUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var userFromRepo = await _repo.GetUser(currentUserId);
+            userParams.UserId = currentUserId;
+            if(string.IsNullOrEmpty(userParams.Gender)){
+                userParams.Gender = userFromRepo.Gender == "male" ? "female" : "male"; // if male then show female, if any show male
+            }
+
             var pagedListUsers = await _repo.GetUsers(userParams);
 
             var usersToReturn = _mapper.Map<IEnumerable<UserForListDto>>(pagedListUsers);

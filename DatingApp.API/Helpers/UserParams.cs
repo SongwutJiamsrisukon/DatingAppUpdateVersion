@@ -12,6 +12,9 @@ namespace DatingApp.API.Helpers
             set { pageSize = (value > MaxPageSize) ? MaxPageSize : value; }
         }
 
+        public int UserId { get; set; }
+        public string Gender { get; set; }
+
         //if client don't specify PageNumber, PageNumber default value = 1
         //if client don't specify PageSize, PageSize default value = 10
         

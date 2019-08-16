@@ -8,11 +8,16 @@ import { catchError } from 'rxjs/operators';
 
 @Injectable()
 export class MemberListResolver implements Resolve<User[]> {
+
+    pageNumber = 1;
+    pageSize = 5;
+
     constructor(private userService: UserService, private router: Router, private alertify: AlertifyService) {}
 
     // use service before routing
     resolve(route: ActivatedRouteSnapshot): Observable<User[]> {
-        return this.userService.getUsers().pipe( //  resolve is auto use subscibe, but we need to catch error(use pipe)
+        //  resolve is auto use subscibe, but we need to catch error(use pipe)
+        return this.userService.getUsers(this.pageNumber, this.pageSize).pipe(
             catchError( e => {
                 this.alertify.error('Problem retrieving data');
                 this.router.navigate(['']);
