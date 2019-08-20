@@ -70,11 +70,13 @@ namespace DatingApp.API.Data
                 users = users.Where(u => u.DateOfBirth >= minDob && u.DateOfBirth <= maxDob);
             }
             users = users.Include(u => u.Photos);
-            if(!string.IsNullOrEmpty(userParams.OrderBy)){
+            if(!string.IsNullOrEmpty(userParams.OrderBy)) {
                 switch (userParams.OrderBy){
                     case "created": users = users.OrderByDescending(u => u.Created);break;
                     default: users = users.OrderByDescending(u => u.LastActive);break;
                 }
+            } else {
+                users = users.OrderByDescending(u => u.LastActive); 
             }
             return await PagedList<User>.CreateAsync(users, userParams.PageNumber, userParams.PageSize);
         }
