@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { User } from '../_models/user';
 import { PaginatedResult } from '../_models/pagination';
 import { map } from 'rxjs/operators';
+import { isUndefined } from 'util';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +16,7 @@ export class UserService {
   constructor(private http: HttpClient) { }
 
   // return type Observable<User[]>
-  getUsers(pageNumber?: any, pageSize?: any, userParams?: any, likesParam?: any): Observable<PaginatedResult<User[]>> {
+  getUsers(pageNumber?: any, pageSize?: any, userParams?: any): Observable<PaginatedResult<User[]>> {
     const paginatedResult: PaginatedResult<User[]> = new PaginatedResult<User[]>();
     let params = new HttpParams();
 
@@ -26,14 +27,12 @@ export class UserService {
       params = params.append('pageSize', pageSize);
     }
     if (userParams != null) {
-      params = params.append('minAge', userParams.minAge);
-      params = params.append('maxAge', userParams.maxAge);
-      params = params.append('gender', userParams.gender);
-      params = params.append('orderBy', userParams.orderBy);
-    }
+      params = isUndefined(userParams.minAge) ? params : params.append('minAge', userParams.minAge);
+      params = isUndefined(userParams.maxAge) ? params : params.append('maxAge', userParams.maxAge);
+      params = isUndefined(userParams.gender) ? params : params.append('gender', userParams.gender);
+      params = isUndefined(userParams.orderBy) ? params : params.append('orderBy', userParams.orderBy);
 
-    if (likesParam === 'Likers' || likesParam === 'Likees') {
-      params = params.append('typeOfLike', likesParam);
+      params = isUndefined(userParams.typeOfLike) ? params : params.append('typeOfLike', userParams.typeOfLike);
     }
     // if observe = response(not body anymore) we need to use rxjs .pipe
     return this.http.get<User[]>(this.baseUrl + 'users', { observe: 'response', params })
