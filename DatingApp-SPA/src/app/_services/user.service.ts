@@ -15,7 +15,7 @@ export class UserService {
   constructor(private http: HttpClient) { }
 
   // return type Observable<User[]>
-  getUsers(pageNumber?: any, pageSize?: any, userParams?: any): Observable<PaginatedResult<User[]>> {
+  getUsers(pageNumber?: any, pageSize?: any, userParams?: any, likesParam?: any): Observable<PaginatedResult<User[]>> {
     const paginatedResult: PaginatedResult<User[]> = new PaginatedResult<User[]>();
     let params = new HttpParams();
 
@@ -30,6 +30,10 @@ export class UserService {
       params = params.append('maxAge', userParams.maxAge);
       params = params.append('gender', userParams.gender);
       params = params.append('orderBy', userParams.orderBy);
+    }
+
+    if (likesParam === 'Likers' || likesParam === 'Likees') {
+      params = params.append('typeOfLike', likesParam);
     }
     // if observe = response(not body anymore) we need to use rxjs .pipe
     return this.http.get<User[]>(this.baseUrl + 'users', { observe: 'response', params })
