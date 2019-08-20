@@ -71,6 +71,23 @@ namespace DatingApp.API.Controllers
 
             throw new Exception($"Update user {id} failed to save");
         }
+        [HttpPost("{id}/remove_like/{recipientId}")]
+        public async Task<IActionResult> RemoveLikeUser(int id, int recipientId){
+            //handle error section
+            if (id != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+                return Unauthorized();
+            var like = await _repo.GetLike(id, recipientId);
+            if (await _repo.GetUser(recipientId) == null){
+                return NotFound(); //404
+            }
+            //end handle error section
+            _repo.Delete<Like>(like);
+            if (await _repo.SaveAll())
+            return Ok(); // don't use Ok(like) because it's pass value of likee and liker(passwordHash+Salt it return to Client)
+
+            return BadRequest("Failed to remove like User");
+        }
+
 
         [HttpPost("{id}/like/{recipientId}")]
         public async Task<IActionResult> LikeUser(int id, int recipientId){
