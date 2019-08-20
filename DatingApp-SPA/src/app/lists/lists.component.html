@@ -12,7 +12,8 @@
   <br>
   <div class="row">
     <div *ngFor="let user of users" class="col-sm-6 col-md-4 col-lg-4 col-xl-2">
-      <app-member-card [user]="user"></app-member-card>
+      <app-member-card *ngIf="userParams.typeOfLike === 'Likees'" [user]="user" [isLike]=2></app-member-card>
+      <app-member-card *ngIf="userParams.typeOfLike === 'Likers'" [user]="user" [isLike]=3></app-member-card>
     </div>
   </div>
 </div>

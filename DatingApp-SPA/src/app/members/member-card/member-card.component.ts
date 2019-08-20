@@ -12,14 +12,23 @@ import { AlertifyService } from 'src/app/_services/alertify.service';
 export class MemberCardComponent implements OnInit {
 
   @Input() user: User;
+  @Input() isLike: number; // 0 is none, 1 can send like, 2 can remove like
   constructor(private authService: AuthService, private userService: UserService, private alertify: AlertifyService) { }
 
   ngOnInit() {
   }
 
-  sendLike(id: number){
+  sendLike(id: number) {
     this.userService.sendLike(this.authService.decodeToken.nameid, id).subscribe(() => {
       this.alertify.success('You have liked: ' + this.user.knownAs);
+    }, e => {
+      this.alertify.error(e);
+    });
+  }
+
+  removeLike(id: number) {
+    this.userService.removeLike(this.authService.decodeToken.nameid, id).subscribe(() => {
+      this.alertify.success('You have remove like on : ' + this.user.knownAs);
     }, e => {
       this.alertify.error(e);
     });
