@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Pagination } from 'src/app/_models/pagination';
-import { LocalUserData } from 'src/app/_models/localUserData';
 import { User } from '../_models/user';
 import { UserService } from '../_services/user.service';
 import { AlertifyService } from '../_services/alertify.service';
@@ -39,7 +38,7 @@ export class ListsComponent implements OnInit {
   }
 
   pageChanged(event: any) {
-    this.pagination.currentPage = event.page;
+    this.userParams.pageNumber = this.pagination.currentPage = event.page;
     this.loadUsers();
   }
 

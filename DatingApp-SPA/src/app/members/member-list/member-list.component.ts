@@ -55,7 +55,7 @@ export class MemberListComponent implements OnInit {
   }
 
   pageChanged(event: any) {
-    this.pagination.currentPage = event.page;
+    this.userParams.pageNumber = this.pagination.currentPage = event.page;
     this.loadUsers();
   }
 }

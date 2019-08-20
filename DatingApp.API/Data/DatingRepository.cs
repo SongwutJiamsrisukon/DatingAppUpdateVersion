@@ -52,16 +52,14 @@ namespace DatingApp.API.Data
         public async Task<PagedList<User>> GetUsers(UserParams userParams)
         {
             var users = _context.Users.AsQueryable();
-            users = users.Where(u => u.Id != userParams.UserId).Where(u => u.Gender == userParams.Gender);
-                
-            if (userParams.TypeOfLike == TypeOfLike.Likers){
-                var userLikers = await GetUserLikes(userParams.UserId, userParams.TypeOfLike);
-                users = users.Where(u => userLikers.Contains(u.Id));
-            }
+            users = users.Where(u => u.Id != userParams.UserId);
 
-            if (userParams.TypeOfLike == TypeOfLike.Likees){
-                var userLikees = await GetUserLikes(userParams.UserId, userParams.TypeOfLike);
-                users = users.Where(u => userLikees.Contains(u.Id));
+            switch (userParams.TypeOfLike) {
+                case TypeOfLike.None: users = users.Where(u => u.Gender == userParams.Gender);break;
+                case TypeOfLike.Likers: var userLikers = await GetUserLikes(userParams.UserId, userParams.TypeOfLike);
+                                        users = users.Where(u => userLikers.Contains(u.Id));break;
+                case TypeOfLike.Likees: var userLikees = await GetUserLikes(userParams.UserId, userParams.TypeOfLike);
+                                        users = users.Where(u => userLikees.Contains(u.Id));break;
             }
 
             if( userParams.MinAge != 18 || userParams.MaxAge != 99) //anyone not default value
