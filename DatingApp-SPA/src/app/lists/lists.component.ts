@@ -43,4 +43,8 @@ export class ListsComponent implements OnInit {
     this.loadUsers();
   }
 
+  removeUsers(event: any) {
+    this.users.splice(this.users.findIndex(u => u.id === event), 1);
+  }
+
 }

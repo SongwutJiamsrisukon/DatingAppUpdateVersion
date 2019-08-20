@@ -33,7 +33,7 @@ export class MemberCardComponent implements OnInit {
     }, e => {
       this.alertify.error(e);
     }, () => {
-      this.loadPage.emit();
+      this.loadPage.emit(id);
     });
   }
 }
