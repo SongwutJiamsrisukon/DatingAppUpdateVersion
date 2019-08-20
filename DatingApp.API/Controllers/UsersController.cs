@@ -6,6 +6,7 @@ using AutoMapper;
 using DatingApp.API.Data;
 using DatingApp.API.Dtos;
 using DatingApp.API.Helpers;
+using DatingApp.API.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -46,7 +47,7 @@ namespace DatingApp.API.Controllers
         }
 
         [HttpGet("{id}", Name = "GetUser")] //use action when hit url with httpGet localhost:5000/api/users/{id}
-        public async Task<ActionResult> GetUser(int id)
+        public async Task<IActionResult> GetUser(int id)
         {
             var user = await _repo.GetUser(id);
             
@@ -55,7 +56,7 @@ namespace DatingApp.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateUser(int id, UserForUpdateDto userForUpdateDto)
+        public async Task<IActionResult> UpdateUser(int id, UserForUpdateDto userForUpdateDto)
         {
             //user id from url matching user id from token
             //we don't permited user id == 2 can edit data on user id ==1
@@ -69,6 +70,34 @@ namespace DatingApp.API.Controllers
                 return NoContent();//204
 
             throw new Exception($"Update user {id} failed to save");
+        }
+
+        [HttpPost("{id}/like/{recipientId}")]
+        public async Task<IActionResult> LikeUser(int id, int recipientId){
+
+            //handle error section
+            if (id != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+                return Unauthorized();
+            var like = await _repo.GetLike(id, recipientId);
+
+            if (like != null)
+                return BadRequest("You already like this user");
+
+            if (await _repo.GetUser(recipientId) == null){
+                return NotFound(); //404
+            }
+            //end handle error section
+
+            like = new Like {
+                LikerId = id,
+                LikeeId = recipientId
+            };
+            _repo.Add<Like>(like); //In Past we do in repository {await _context.Like.AddAsync(like);}
+                                   //Now we use generic method that we implemented
+            if (await _repo.SaveAll())
+            return Ok(); // do'nt use Ok(like) because it's pass value of likee and liker(passwordHash+Salt it return to Client)
+
+            return BadRequest("Failed to like User");
         }
     }
 }

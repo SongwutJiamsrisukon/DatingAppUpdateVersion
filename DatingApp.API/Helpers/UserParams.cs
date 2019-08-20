@@ -1,3 +1,5 @@
+using static DatingApp.API.Helpers.EnumWarehouse;
+
 namespace DatingApp.API.Helpers
 {
     public class UserParams
@@ -17,9 +19,8 @@ namespace DatingApp.API.Helpers
         public int MinAge { get; set; } = 18;
         public int MaxAge { get; set; } = 99;
         public string OrderBy { get; set; }
+        public TypeOfLike TypeOfLike { get; set; } = TypeOfLike.None;
 
-        //if client don't specify PageNumber, PageNumber default value = 1
-        //if client don't specify PageSize, PageSize default value = 10
         
     }
 }
