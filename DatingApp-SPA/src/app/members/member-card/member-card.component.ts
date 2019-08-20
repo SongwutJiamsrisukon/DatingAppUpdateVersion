@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { User } from 'src/app/_models/user';
 import { AuthService } from 'src/app/_services/auth.service';
 import { UserService } from 'src/app/_services/user.service';
@@ -12,7 +12,8 @@ import { AlertifyService } from 'src/app/_services/alertify.service';
 export class MemberCardComponent implements OnInit {
 
   @Input() user: User;
-  @Input() isLike: number; // 0 is none, 1 can send like, 2 can remove like
+  @Input() isLike: number; // 0 is none, 1 can send like, -1 can remove like
+  @Output() loadPage = new EventEmitter();
   constructor(private authService: AuthService, private userService: UserService, private alertify: AlertifyService) { }
 
   ngOnInit() {
@@ -31,7 +32,8 @@ export class MemberCardComponent implements OnInit {
       this.alertify.success('You have remove like on : ' + this.user.knownAs);
     }, e => {
       this.alertify.error(e);
+    }, () => {
+      this.loadPage.emit();
     });
   }
-
 }
