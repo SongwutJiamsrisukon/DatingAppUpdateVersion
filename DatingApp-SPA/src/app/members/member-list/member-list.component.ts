@@ -27,6 +27,8 @@ export class MemberListComponent implements OnInit {
       this.users = data['users'].result;
       this.pagination = data['users'].pagination;
     });
+    this.userParams.pageNumber = this.pagination.currentPage;
+    this.userParams.pageSize = this.pagination.pageSize;
     this.userParams.gender = this.localUserData.gender === 'male' ? 'female' : 'male';
     this.userParams.minAge = 18;
     this.userParams.maxAge = 99;
@@ -34,6 +36,8 @@ export class MemberListComponent implements OnInit {
   }
 
   resetFilters() {
+    this.userParams.pageNumber = this.pagination.currentPage;
+    this.userParams.pageSize = this.pagination.pageSize;
     this.userParams.gender = this.localUserData.gender === 'male' ? 'female' : 'male';
     this.userParams.minAge = 18;
     this.userParams.maxAge = 99;
@@ -42,7 +46,7 @@ export class MemberListComponent implements OnInit {
   }
 
   loadUsers() {
-    this.userService.getUsers(this.pagination.currentPage, this.pagination.pageSize, this.userParams).subscribe(d => {
+    this.userService.getUsers(this.userParams).subscribe(d => {
       this.users = d.result;
       this.pagination = d.pagination;
     }, e => {

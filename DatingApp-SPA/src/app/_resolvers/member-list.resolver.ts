@@ -9,15 +9,16 @@ import { catchError } from 'rxjs/operators';
 @Injectable()
 export class MemberListResolver implements Resolve<User[]> {
 
-    pageNumber = 1;
-    pageSize = 5;
+    userParams: any = {};
 
     constructor(private userService: UserService, private router: Router, private alertify: AlertifyService) {}
 
     // use service before routing
     resolve(route: ActivatedRouteSnapshot): Observable<User[]> {
         //  resolve is auto use subscibe, but we need to catch error(use pipe)
-        return this.userService.getUsers(this.pageNumber, this.pageSize).pipe(
+        this.userParams.pageNumber = 1;
+        this.userParams.pageSize = 5;
+        return this.userService.getUsers(this.userParams).pipe(
             catchError( e => {
                 this.alertify.error('Problem retrieving data');
                 this.router.navigate(['']);

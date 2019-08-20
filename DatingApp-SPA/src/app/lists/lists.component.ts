@@ -24,11 +24,13 @@ export class ListsComponent implements OnInit {
       this.users = data['users'].result;
       this.pagination = data['users'].pagination;
     });
+    this.userParams.pageNumber = this.pagination.currentPage;
+    this.userParams.pageSize = this.pagination.pageSize;
     this.userParams.typeOfLike = 'Likers';
   }
 
   loadUsers() {
-    this.userService.getUsers(this.pagination.currentPage, this.pagination.pageSize, this.userParams).subscribe(d => {
+    this.userService.getUsers(this.userParams).subscribe(d => {
       this.users = d.result;
       this.pagination = d.pagination;
     }, e => {
