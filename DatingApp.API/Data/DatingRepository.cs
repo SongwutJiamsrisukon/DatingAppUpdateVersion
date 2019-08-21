@@ -55,20 +55,19 @@ namespace DatingApp.API.Data
             users = users.Where(u => u.Id != userParams.UserId);
 
             switch (userParams.TypeOfLike) {
-                case TypeOfLike.None: users = users.Where(u => u.Gender == userParams.Gender);break;
+                case TypeOfLike.None: users = users.Where(u => u.Gender == userParams.Gender);
+                                        var minDob = DateTime.Today.AddYears(-userParams.MaxAge-1);
+                                        var maxDob = DateTime.Today.AddYears(-userParams.MinAge);
+                                        users = users.Where(u => u.DateOfBirth >= minDob && u.DateOfBirth <= maxDob);
+                                        break;
                 case TypeOfLike.Likers: var userLikers = await GetUserLikes(userParams.UserId, userParams.TypeOfLike);
-                                        users = users.Where(u => userLikers.Contains(u.Id));break;
+                                        users = users.Where(u => userLikers.Contains(u.Id));
+                                        break;
                 case TypeOfLike.Likees: var userLikees = await GetUserLikes(userParams.UserId, userParams.TypeOfLike);
-                                        users = users.Where(u => userLikees.Contains(u.Id));break;
+                                        users = users.Where(u => userLikees.Contains(u.Id));
+                                        break;
             }
 
-            if( userParams.MinAge != 18 || userParams.MaxAge != 99) //anyone not default value
-            {
-                var minDob = DateTime.Today.AddYears(-userParams.MaxAge-1);
-                var maxDob = DateTime.Today.AddYears(-userParams.MinAge);
-
-                users = users.Where(u => u.DateOfBirth >= minDob && u.DateOfBirth <= maxDob);
-            }
             users = users.Include(u => u.Photos);
             if(!string.IsNullOrEmpty(userParams.OrderBy)) {
                 switch (userParams.OrderBy){
