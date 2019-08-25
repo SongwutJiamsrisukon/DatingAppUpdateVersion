@@ -22,3 +22,23 @@
     overflow-y: scroll;
     height: 400px;
 }
+
+.align-left {
+    padding-left: 5px;
+    text-align: left;
+}
+.align-right {
+    padding-right: 5px;
+    text-align: right;
+}
+.unbold {
+    font-weight: normal;
+}
+/*
+.fontSmall {
+    font-size: small;
+}
+.fontLarge {
+    font-size: large;
+}
+*/

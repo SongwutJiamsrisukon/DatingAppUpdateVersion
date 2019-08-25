@@ -7,6 +7,21 @@
     <ul class="chat">
       <li *ngFor="let message of messages">
         <!--to them-->
+        <table *ngIf="message.senderId == recipientId" style="width:100%">
+          <tr>
+              <th rowspan="2" style="width:1%"><img src="{{message.senderPhotoUrl}}" alt="{{message.senderKnownAs}}" class="rounded-circle"></th>
+              <th class="align-left">{{message.senderKnownAs}}</th>
+              <th class="align-right">
+                <small class="text-muted">
+                  <span class="fa fa-clock-0">{{message.sentTime | timeAgo}}</span>
+                </small>
+              </th>
+          </tr>
+          <tr>
+              <th colspan="2" class="align-left"><span class="unbold">{{message.content}}</span></th>
+          </tr>
+        </table>
+        <!--
         <div *ngIf="message.senderId == recipientId">
           <span class="chat-img float-left">
             <img src="{{message.senderPhotoUrl}}" alt="{{message.senderKnownAs}}" class="rounded-circle">
@@ -21,7 +36,27 @@
             <p>{{message.content}}</p>
           </div>
         </div>
+        -->
         <!--to me-->
+
+        <table *ngIf="message.senderId != recipientId" style="width:100%">
+          <tr>
+              <th class="align-left">
+                <small class="text-muted">
+                  <span class="fa fa-clock-0">{{message.sentTime | timeAgo}}</span>
+                  <span *ngIf="!message.isRead" class="text-danger">(unread)</span>
+                  <span *ngIf="message.isRead" class="text-success">(Read {{message.readTime | timeAgo}})</span>
+                </small>
+              </th>
+              <th class="align-right">{{message.senderKnownAs}}</th>
+              <th rowspan="2" style="width:1%"><img src="{{message.senderPhotoUrl}}" alt="{{message.senderKnownAs}}" class="rounded-circle"></th>
+          </tr>
+          <tr>
+            <th colspan="2" class="align-right"><span class="unbold">{{message.content}}</span></th>
+          </tr>
+      </table>
+
+        <!--
         <div *ngIf="message.senderId != recipientId">
           <span class="chat-img float-right">
             <img src="{{message.senderPhotoUrl}}" alt="{{message.senderKnownAs}}" class="rounded-circle">
@@ -38,6 +73,7 @@
             <p>{{message.content}}</p>
           </div>
         </div>
+      -->
       </li>
     </ul><!--end <ul class="chat">-->
   </div><!--end <div class="card-body">-->
