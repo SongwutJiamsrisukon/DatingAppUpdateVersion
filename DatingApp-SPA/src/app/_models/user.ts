@@ -6,7 +6,7 @@ export interface User {
     knownAs: string;
     age: number;
     gender: string;
-    created: DataCue;
+    created: Date;
     lastActive: Date;
     city: string;
     country: string;
