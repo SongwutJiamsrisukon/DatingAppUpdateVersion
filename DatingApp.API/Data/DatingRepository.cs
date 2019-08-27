@@ -108,11 +108,11 @@ namespace DatingApp.API.Data
             messages = messages.Include(m => m.Recipient).ThenInclude(u => u.Photos);
 
             switch (messageParams.MessageContainer) {
-                case "Inbox": messages = messages.Where(m => m.RecipientId == messageParams.UserId);
+                case "Inbox": messages = messages.Where(m => m.RecipientId == messageParams.UserId && m.RecipientDeleted == false);
                 break;
-                case "Outbox": messages = messages.Where(m => m.SenderId == messageParams.UserId);
+                case "Outbox": messages = messages.Where(m => m.SenderId == messageParams.UserId && m.SenderDeleted == false);
                 break;
-                default: messages = messages.Where(m => m.RecipientId == messageParams.UserId && m.IsRead == false);
+                default: messages = messages.Where(m => m.RecipientId == messageParams.UserId && m.IsRead == false && m.RecipientDeleted == false);
                 break; // Unread
             }
             messages = messages.OrderByDescending(m => m.SentTime);
@@ -126,8 +126,8 @@ namespace DatingApp.API.Data
             messages = messages.Include(m => m.Sender).ThenInclude(u => u.Photos);
             messages = messages.Include(m => m.Recipient).ThenInclude(u => u.Photos);
 
-            messages = messages.Where(m => (m.RecipientId == userId && m.SenderId == recipientId)
-            || (m.RecipientId == recipientId && m.SenderId == userId)); // get all conversation between 2 users
+            messages = messages.Where(m => (m.RecipientId == userId && m.SenderId == recipientId && m.RecipientDeleted == false)
+            || (m.RecipientId == recipientId && m.SenderId == userId && m.SenderDeleted == false)); // get all conversation between 2 users
 
             messages = messages.OrderByDescending(m => m.SentTime);
 

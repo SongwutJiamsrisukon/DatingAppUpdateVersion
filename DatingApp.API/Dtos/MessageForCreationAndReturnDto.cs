@@ -8,6 +8,7 @@ namespace DatingApp.API.Dtos
         public int RecipientId { get; set; }
         public DateTime SentTime { get; set; }
         public string Content { get; set; }
+
         public MessageForCreationAndReturnDto()
         {
             SentTime = DateTime.Now;

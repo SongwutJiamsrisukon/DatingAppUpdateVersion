@@ -44,30 +44,6 @@ export class UserService {
     );
   }
 
-    getMessages(id: number, messageParams?: any) {
-      const paginatedResult: PaginatedResult<Message[]> = new PaginatedResult<Message[]>();
-      let params = new HttpParams();
-
-      params = isUndefined(messageParams.pageNumber) ? params : params.append('pageNumber', messageParams.pageNumber);
-      params = isUndefined(messageParams.pageSize) ? params : params.append('pageSize', messageParams.pageSize);
-
-      params = isUndefined(messageParams.messageContainer) ? params : params.append('messageContainer', messageParams.messageContainer);
-
-      return this.http.get<Message[]>(this.baseUrl + 'users/' + id + '/messages', { observe: 'response', params })
-      .pipe(
-        map(r => {
-          paginatedResult.result = r.body;
-          if (r.headers.get('Pagination') != null) {
-            paginatedResult.pagination = JSON.parse(r.headers.get('Pagination')); // converts JSON data into JavaScript Object.
-          }
-          return paginatedResult;
-        })
-      );
-    }
-
-  getMessageThread(id: number, recipientId: number){
-    return this.http.get<Message[]>(this.baseUrl + 'users/' + id + '/messages/thread/' + recipientId);
-  }
   getUser(id: number): Observable<User> {
     return this.http.get<User>(this.baseUrl + 'users/' + id);
   }
@@ -90,5 +66,42 @@ export class UserService {
 
   removeLike(id: number, recipientId: number) {
     return this.http.post(this.baseUrl + 'users/' + id + '/remove_like/' + recipientId, {});
+  }
+
+  getMessages(id: number, messageParams?: any) {
+    const paginatedResult: PaginatedResult<Message[]> = new PaginatedResult<Message[]>();
+    let params = new HttpParams();
+
+    params = isUndefined(messageParams.pageNumber) ? params : params.append('pageNumber', messageParams.pageNumber);
+    params = isUndefined(messageParams.pageSize) ? params : params.append('pageSize', messageParams.pageSize);
+
+    params = isUndefined(messageParams.messageContainer) ? params : params.append('messageContainer', messageParams.messageContainer);
+
+    return this.http.get<Message[]>(this.baseUrl + 'users/' + id + '/messages', { observe: 'response', params })
+    .pipe(
+      map(r => {
+        paginatedResult.result = r.body;
+        if (r.headers.get('Pagination') != null) {
+          paginatedResult.pagination = JSON.parse(r.headers.get('Pagination')); // converts JSON data into JavaScript Object.
+        }
+        return paginatedResult;
+      })
+    );
+  }
+
+  getMessageThread(id: number, recipientId: number) {
+    return this.http.get<Message[]>(this.baseUrl + 'users/' + id + '/messages/thread/' + recipientId);
+  }
+
+  sendMessage(id: number, message: Message) {
+    return this.http.post(this.baseUrl + 'users/' + id + '/messages', message);
+  }
+
+  deleteMessage(messageId: number, userId: number) {
+    return this.http.post(this.baseUrl + 'users/' + userId + '/messages/' + messageId, {});
+  }
+
+  markAsRead(userId: number, messageId: number) {
+    this.http.post(this.baseUrl + 'users/' + userId + '/messages/' + messageId + '/read', {}).subscribe();
   }
 }

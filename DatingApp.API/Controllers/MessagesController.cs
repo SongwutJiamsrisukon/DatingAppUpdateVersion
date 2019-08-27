@@ -70,6 +70,9 @@ namespace DatingApp.API.Controllers
         
         [HttpPost]
         public async Task<IActionResult> CreateMessage(int userId, MessageForCreationAndReturnDto messageForCreationDto) {
+
+            var sender = await _repo.GetUser(userId); //declare to auto match id to object with object.id
+
             //handle error section
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
                 return Unauthorized();
@@ -85,10 +88,53 @@ namespace DatingApp.API.Controllers
 
             _repo.Add<Message>(message);
             if (await _repo.SaveAll()){
-                var messageForReturnDto = _mapper.Map<MessageForCreationAndReturnDto>(message);
+                var messageForReturnDto = _mapper.Map<MessageAndUserDataForReturnDto>(message);
                 return CreatedAtRoute("GetMessage", new { id = message.Id }, messageForReturnDto);
             }
             throw new Exception("Creating the message failed on save");
+        }
+
+        [HttpPost("{id}")] // don't using HttpDelete because some case is only mark delete
+        public async Task<IActionResult> DeleteMessage(int id, int userId){
+            //handle error section
+            if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+                return Unauthorized();
+            //end handle error section
+            var messageFromRepo = await _repo.GetMessage(id);
+
+            if(messageFromRepo.SenderId == userId)
+                messageFromRepo.SenderDeleted = true;
+
+            if(messageFromRepo.RecipientId == userId)
+                messageFromRepo.RecipientDeleted = true;
+
+            if(messageFromRepo.SenderDeleted && messageFromRepo.RecipientDeleted)
+                _repo.Delete(messageFromRepo);
+
+            if(await _repo.SaveAll())
+            return NoContent();
+
+            throw new Exception("Error deleting the message");
+        }
+
+        [HttpPost("{id}/read")]
+        public async Task<IActionResult> MarkMessageAsRead(int userId, int id) {
+            //handle error section
+            if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+                return Unauthorized();
+            //end handle error section
+
+            var messageFromRepo = await _repo.GetMessage(id);
+
+            if (messageFromRepo.RecipientId != userId) // only RecipientId that had mark
+                return Unauthorized();
+
+            messageFromRepo.IsRead = true;
+            messageFromRepo.ReadTime = DateTime.Now;
+
+            await _repo.SaveAll();
+
+            return NoContent();
         }
     }
 }
