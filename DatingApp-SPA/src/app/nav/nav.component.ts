@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../_services/auth.service';
-import { tokenKey } from '@angular/core/src/view';
 import { AlertifyService } from '../_services/alertify.service';
 import { Router } from '@angular/router';
 

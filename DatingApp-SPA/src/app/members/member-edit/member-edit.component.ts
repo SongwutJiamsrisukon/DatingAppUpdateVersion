@@ -14,7 +14,7 @@ import { AuthService } from 'src/app/_services/auth.service';
 export class MemberEditComponent implements OnInit {
   user: User;
   photoUrl: string;
-  @ViewChild('editForm') editForm: NgForm; // get from <form #editForm="ngForm" in html
+  @ViewChild('editForm', {static: true}) editForm: NgForm; // get from <form #editForm="ngForm" in html
   @HostListener('window:beforeunload', ['$event'])
   unloadNotification($event: any) {
     if (this.editForm.dirty) {

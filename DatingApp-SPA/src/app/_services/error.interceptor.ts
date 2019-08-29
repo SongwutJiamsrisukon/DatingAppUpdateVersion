@@ -24,10 +24,10 @@ export class ErrorInterceptor implements HttpInterceptor {
                     let modelStateError = ''; // ต่างจาก var ตรงที่ เมื่อประกาศ let variable ไว้ 2 ตำแหน่ง คือในและนอก scope
                                                 // เมื่อ ออกนอก scope แล้ว print มันจะเลือก let variable ที่อยู่นอก scope
                                                 // let คือ blocked-scope
-                    if (serverError && typeof serverError === 'object') {
+                    if (serverError.errors && typeof serverError.errors === 'object') {
                         for (const key in serverError) {
-                            if (serverError[key]) {
-                                modelStateError += serverError[key] + '\n';
+                            if (serverError.errors[key]) {
+                                modelStateError += serverError.errors[key] + '\n';
                             }
                         }
                     }
